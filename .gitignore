@@ -1,0 +1,11 @@
+# terraform
+**/.terraform/*
+
+# PyCharm files
+.idea/
+
+# Environment variables
+terraform.tfvars
+
+# For Terraform init
+backend-config
