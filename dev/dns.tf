@@ -11,3 +11,8 @@ resource "aws_route53_record" "node_record" {
   ttl     = "60"
   records = [each.value]
 }
+
+output "node_addresses" {
+  value = {for node_name in local.nodes : node_name => aws_route53_record.node_record[node_name].name}
+  description = "The public DNS name for each node."
+}
