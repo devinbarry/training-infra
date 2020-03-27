@@ -2,7 +2,8 @@ provider "aws" {
   access_key = var.aws_access_key
   secret_key = var.aws_secret_key
   region     = var.aws_region
-  version = "~> 2.54"
+  profile    = var.aws_profile
+  version    = "~> 2.54"
 }
 
 terraform {
@@ -10,7 +11,7 @@ terraform {
 }
 
 locals {
-  num_training_node = 1
+  nodes = ["node0"]
 }
 
 output "subnet_cidr" {
@@ -18,7 +19,8 @@ output "subnet_cidr" {
 }
 
 output "training_node_ips" {
-  value = aws_instance.training_node.*.public_ip
+  value = {for node_name in local.nodes : node_name => aws_instance.training_node[node_name].public_ip}
+  description = "The public IP addresses of each server with its name."
 }
 
 resource "aws_default_subnet" "default" {
@@ -56,7 +58,6 @@ resource "aws_security_group" "training_node" {
 
 data "aws_ami" "ubuntu_1804_LTS" {
   most_recent = true
-  # name_regex = "Ubuntu 18.04 20191113"
 
   filter {
     name   = "name"
@@ -80,15 +81,18 @@ data "aws_ami" "ubuntu_1804_LTS" {
 
 # Training Node
 resource "aws_instance" "training_node" {
+  for_each = toset(local.nodes)
+
   ami = data.aws_ami.ubuntu_1804_LTS.id
   instance_type = "g4dn.xlarge"
   key_name = var.aws_key_name
   vpc_security_group_ids = ["${aws_security_group.training_node.id}"]
   subnet_id = aws_default_subnet.default.id
-  count = local.num_training_node
   depends_on = [aws_default_subnet.default, aws_security_group.training_node]
 
   tags = {
-      Name = "TrainingNode${count.index}"
+      Name = "Training${title(each.key)}"
   }
 }
+
+
