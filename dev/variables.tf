@@ -19,3 +19,5 @@ variable "aws_key_name" {}
 variable "availability_zone" {
     default = "us-east-1c"
 }
+
+variable "primary_route53_zone_name" {}
