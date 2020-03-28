@@ -11,7 +11,8 @@ terraform {
 }
 
 locals {
-  nodes = ["node0"]
+  # List of names of all the nodes
+  nodes = keys(var.nodes)
 }
 
 output "subnet_cidr" {
@@ -79,12 +80,12 @@ data "aws_ami" "ubuntu_1804_LTS" {
 
 
 
-# Training Node
+# Training Node(s)
 resource "aws_instance" "training_node" {
-  for_each = toset(local.nodes)
+  for_each = var.nodes
 
   ami = data.aws_ami.ubuntu_1804_LTS.id
-  instance_type = "g4dn.xlarge"
+  instance_type = each.value
   key_name = var.aws_key_name
   vpc_security_group_ids = ["${aws_security_group.training_node.id}"]
   subnet_id = aws_default_subnet.default.id

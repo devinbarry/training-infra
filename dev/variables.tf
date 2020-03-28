@@ -20,4 +20,12 @@ variable "availability_zone" {
     default = "us-east-1c"
 }
 
+# Node / Machine Type mapping
+variable "nodes" {
+    type = map(string)
+    default = {
+        "node0"  = "g4dn.xlarge"
+    }
+}
+
 variable "primary_route53_zone_name" {}
