@@ -17,7 +17,7 @@ variable "aws_key_name" {}
 
 # Your availablity zone in your region.
 variable "availability_zone" {
-    default = "us-east-1c"
+  default = "us-east-1c"
 }
 
 # Node / Machine Type mapping
@@ -28,4 +28,5 @@ variable "nodes" {
     }
 }
 
+# Hosted zone to configure DNS
 variable "primary_route53_zone_name" {}

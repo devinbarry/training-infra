@@ -4,11 +4,14 @@ Terraform code to deploy DLR training infrastructure on AWS.
 
 ## Running Terragrunt Commands
 
-
 1. `export AWS_PROFILE=aws_trading_terraform`
 2. `terragrunt plan`
 3. `terragrunt apply`
-4. etc
+
+
+## Destroying Infrastructure
+
+`terragrunt destroy` will take down Route53 zones so cannot be used.
 
 
 ## Try to find AMI images
