@@ -90,6 +90,13 @@ resource "aws_instance" "training_node" {
   subnet_id = aws_default_subnet.default.id
   depends_on = [aws_default_subnet.default, aws_security_group.training_node]
 
+  root_block_device {
+    volume_type = "gp2"
+    volume_size = 100
+    iops = 300
+    delete_on_termination = true
+  }
+
   tags = {
       Name = "Training${title(each.key)}"
   }
