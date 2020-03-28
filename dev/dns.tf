@@ -1,5 +1,10 @@
 resource "aws_route53_zone" "primary" {
   name = var.primary_route53_zone_name
+
+  # We explicitly prevent destruction using terraform.
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_route53_record" "node_record" {
