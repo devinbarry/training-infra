@@ -15,6 +15,12 @@ resource "aws_route53_record" "node_record" {
   type    = "A"
   ttl     = "60"
   records = [each.value]
+
+  # Public IP addresses in the form of Elastic IPs must have been
+  # created first before we can add them to the DNS records.
+  depends_on = [
+    aws_eip.node_ips,
+  ]
 }
 
 output "node_addresses" {

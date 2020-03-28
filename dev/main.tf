@@ -103,4 +103,18 @@ resource "aws_instance" "training_node" {
   }
 }
 
+# Elastic IPs attached to each node. These prevent us having incorrect DNS values
+# each time we shut down a machine and boot it back up again. Now instead we will
+# keep the same IP address for as long as the machine exists.
+resource "aws_eip" "node_ips" {
+  for_each = var.nodes
+
+  instance = aws_instance.training_node[each.key].id
+  vpc = true
+
+  tags = {
+      Name = "${title(each.key)} IP"
+  }
+}
+
 
