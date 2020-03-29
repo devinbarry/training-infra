@@ -19,11 +19,6 @@ output "subnet_cidr" {
   value = aws_default_subnet.default.cidr_block
 }
 
-output "training_node_ips" {
-  value = {for node_name in local.nodes : node_name => aws_instance.training_node[node_name].public_ip}
-  description = "The public IP addresses of each server with its name."
-}
-
 resource "aws_default_subnet" "default" {
   availability_zone = var.availability_zone
 
@@ -102,19 +97,3 @@ resource "aws_instance" "training_node" {
       Name = "Training${title(each.key)}"
   }
 }
-
-# Elastic IPs attached to each node. These prevent us having incorrect DNS values
-# each time we shut down a machine and boot it back up again. Now instead we will
-# keep the same IP address for as long as the machine exists.
-resource "aws_eip" "node_ips" {
-  for_each = var.nodes
-
-  instance = aws_instance.training_node[each.key].id
-  vpc = true
-
-  tags = {
-      Name = "${title(each.key)} IP"
-  }
-}
-
-
