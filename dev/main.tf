@@ -15,43 +15,6 @@ locals {
   nodes = keys(var.nodes)
 }
 
-output "subnet_cidr" {
-  value = aws_default_subnet.default.cidr_block
-}
-
-resource "aws_default_subnet" "default" {
-  availability_zone = var.availability_zone
-
-  tags = {
-    Name = "Training Node Subnet"
-  }
-}
-
-resource "aws_security_group" "training_node" {
-  name = "training_node-sg"
-  description = "Security group for Dev Training Node"
-
-  # For ssh
-  ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = [var.ssh_cidr]
-    description = "SSH from office"
-  }
-
-  egress {
-      from_port = 0
-      to_port = 0
-      protocol = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-      Name = "training_node-sg"
-  }
-}
-
 data "aws_ami" "ubuntu_1804_LTS" {
   most_recent = true
 
@@ -88,8 +51,6 @@ resource "aws_instance" "training_node" {
   instance_type = each.value
   placement_group = aws_placement_group.training_node_cluster.id
   key_name = var.aws_key_name
-  vpc_security_group_ids = ["${aws_security_group.training_node.id}"]
-  subnet_id = aws_default_subnet.default.id
   depends_on = [aws_default_subnet.default, aws_security_group.training_node]
 
   root_block_device {
