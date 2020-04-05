@@ -8,12 +8,43 @@ resource "aws_vpc" "training_vpc" {
   }
 }
 
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.training_vpc.id
+
+  tags = {
+    Name = "TrainingGW"
+  }
+}
+
+resource "aws_egress_only_internet_gateway" "main" {
+  vpc_id = aws_vpc.training_vpc.id
+}
+
+resource "aws_route_table" "training_subnet_route_table" {
+  vpc_id = aws_vpc.training_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+
+  route {
+    ipv6_cidr_block        = "::/0"
+    egress_only_gateway_id = aws_egress_only_internet_gateway.main.id
+  }
+
+  tags = {
+    Name = "TrainingSubnetRouteTable"
+  }
+}
+
 resource "aws_subnet" "training_subnet" {
   availability_zone = var.availability_zone
   vpc_id = aws_vpc.training_vpc.id
   cidr_block = var.training_subnet_cidr
   # We use Elastic IPs instead
   map_public_ip_on_launch = false
+  depends_on = [aws_internet_gateway.main]
 
   tags = {
     Name = "TrainingNodeSubnet"

@@ -10,6 +10,7 @@ resource "aws_eip" "node_ips" {
 
   instance = aws_instance.training_node[each.key].id
   vpc = true
+  depends_on = [aws_internet_gateway.main]
 
   tags = {
       Name = "${title(each.key)} IP"
