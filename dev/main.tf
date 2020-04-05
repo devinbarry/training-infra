@@ -51,7 +51,11 @@ resource "aws_instance" "training_node" {
   instance_type = each.value
   placement_group = aws_placement_group.training_node_cluster.id
   key_name = var.aws_key_name
-  depends_on = [aws_default_subnet.default, aws_security_group.training_node]
+
+  network_interface {
+    device_index = 0
+    network_interface_id = aws_network_interface.training_node_interfaces[each.key].id
+  }
 
   root_block_device {
     volume_type = "gp2"

@@ -5,8 +5,13 @@ variable "aws_profile" {}
 variable "aws_region" {
   description = "AWS region e.g. us-east-1 (Please specify a region supported by the Fargate launch type)"
 }
-variable "aws_resource_prefix" {
-  description = "Prefix to be used in the naming of some of the created AWS resources e.g. demo-webapp"
+
+variable "training_vpc_cidr" {
+  description = "CIDR for the Training VPC"
+}
+
+variable "training_subnet_cidr" {
+  description = "Private subnet for all training node instances"
 }
 
 # You are able to block access from non-specified IP address by setting specific cidr.
