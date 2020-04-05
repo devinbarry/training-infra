@@ -77,11 +77,29 @@ resource "aws_security_group" "training_node_ssh" {
   }
 }
 
+resource "aws_security_group" "training_node_comms" {
+  name = "training_node_comms-sg"
+  description = "Inter node communications."
+  vpc_id = aws_vpc.training_vpc.id
+
+  ingress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [var.training_subnet_cidr]
+    description = "Inter node communication"
+  }
+
+  tags = {
+      Name = "TrainingNodeComms"
+  }
+}
+
 resource "aws_network_interface" "training_node_interfaces" {
   for_each = var.nodes
 
   subnet_id = aws_subnet.training_subnet.id
-  security_groups = [aws_security_group.training_node_ssh.id]
+  security_groups = [aws_security_group.training_node_ssh.id, aws_security_group.training_node_comms.id]
 
   tags = {
       Name = "Training${title(each.key)} ENI"
