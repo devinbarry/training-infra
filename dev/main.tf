@@ -94,8 +94,8 @@ resource "aws_instance" "training_node" {
 
   root_block_device {
     volume_type = "gp2"
-    volume_size = 100
-    iops = 300
+    volume_size = var.ebs.volume_size
+    iops = var.ebs.iops
     delete_on_termination = true
   }
 

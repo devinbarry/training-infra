@@ -6,7 +6,7 @@ Terraform code to deploy DLR training infrastructure on AWS.
 
 1. `export AWS_PROFILE=aws_trading_terraform`
 2. `terragrunt plan`
-3. `terragrunt apply`
+3. `terragrunt apply -auto-approve`
 
 
 ## Destroying Infrastructure

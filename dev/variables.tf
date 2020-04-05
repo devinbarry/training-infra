@@ -28,5 +28,14 @@ variable "nodes" {
     }
 }
 
+# Size and IOPS of underlying EBS volume for each node
+variable "ebs" {
+  type = map(string)
+  default = {
+    "volume_size" = 100
+    "iops" = 300
+  }
+}
+
 # Hosted zone to configure DNS
 variable "primary_route53_zone_name" {}
