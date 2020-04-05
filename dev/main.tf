@@ -74,6 +74,11 @@ data "aws_ami" "ubuntu_1804_LTS" {
 }
 
 
+resource "aws_placement_group" "training_node_cluster" {
+  name     = "training_node-pg"
+  strategy = "cluster"
+}
+
 
 # Training Node(s)
 resource "aws_instance" "training_node" {
@@ -81,6 +86,7 @@ resource "aws_instance" "training_node" {
 
   ami = data.aws_ami.ubuntu_1804_LTS.id
   instance_type = each.value
+  placement_group = aws_placement_group.training_node_cluster.id
   key_name = var.aws_key_name
   vpc_security_group_ids = ["${aws_security_group.training_node.id}"]
   subnet_id = aws_default_subnet.default.id
